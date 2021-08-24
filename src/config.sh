@@ -93,14 +93,20 @@ function banner(){
 }
 
 function configuration(){
-echo -e "${LBlue}[${BPurple}?${LBlue}] ${BWhite}Escriba la Interface disponible a usar:${Color_Off}"
+echo -e "${LBlue}[${BPurple}?${LBlue}] ${BWhite}Elija la Interface disponible a usar:${Color_Off}"
 ifconfig -a | cut -d ' ' -f 1 | xargs | tr ' ' '\n' | tr -d ':' > iface
 counter=1; for interface in $(cat iface); do
 	echo -e "\t${BBlue}$counter.${BGreen} $interface${Color_Off}"; sleep 0.26
 	let counter++
 done
 echo -en "\n${BGreen}>${Color_Off} " && read IFACE
-echo $IFACE > iface.txt
+counter=1; for interface in $(cat iface); do
+	if [[ "$counter" == "$IFACE" ]]; then
+        echo $interface > iface.txt
+        break
+    fi
+    let counter++
+done
 rm iface
 
 echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del atacante a usar (1/2):${Color_Off}"
