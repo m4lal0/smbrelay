@@ -93,41 +93,42 @@ function banner(){
 }
 
 function configuration(){
-echo -e "${LBlue}[${BPurple}?${LBlue}] ${BWhite}Elija la Interface disponible a usar:${Color_Off}"
-ifconfig -a | cut -d ' ' -f 1 | xargs | tr ' ' '\n' | tr -d ':' > iface
-counter=1; for interface in $(cat iface); do
-	echo -e "\t${BBlue}$counter.${BGreen} $interface${Color_Off}"; sleep 0.26
-	let counter++
-done
-echo -en "\n${BGreen}>${Color_Off} " && read IFACE
-counter=1; for interface in $(cat iface); do
-	if [[ "$counter" == "$IFACE" ]]; then
-        echo $interface > iface.txt
-        break
+    echo -e "${LBlue}[${BPurple}?${LBlue}] ${BWhite}Elija la Interface disponible a usar:${Color_Off}"
+    ifconfig -a | cut -d ' ' -f 1 | xargs | tr ' ' '\n' | tr -d ':' > iface
+    counter=1; for interface in $(cat iface); do
+        echo -e "\t${BBlue}$counter.${BGreen} $interface${Color_Off}"; sleep 0.26
+        let counter++
+    done
+    echo -en "\n${BGreen}>${Color_Off} " && read IFACE
+    counter=1; for interface in $(cat iface); do
+        if [[ "$counter" == "$IFACE" ]]; then
+            echo $interface > iface.txt
+            break
+        fi
+        let counter++
+    done
+    rm iface
+
+    echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del atacante a usar (1/2):${Color_Off}"
+    echo -e "\t${BBlue}1. ${BGreen}Usar mi dirección IP local${Color_Off}"
+    echo -e "\t${BBlue}2. ${BGreen}Usar otra direccion IP${Color_Off}"
+    echo -en "\n${BGreen}>${Color_Off} " && read SELECT
+    if [[ $SELECT == "1" ]]; then
+        HOST=$(ip route get 1 | awk '{print $7}')
+        echo $HOST > host.txt
+    elif [[ $SELECT == "2" ]]; then
+        echo -e "${LBlue}[${BPurple}?${LBlue}] Escriba la dirección IP a usar${Color_Off}"
+        echo -en "\n${BGreen}>${Color_Off} " && read HOST
+        echo $HOST > host.txt
     fi
-    let counter++
-done
-rm iface
 
-echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del atacante a usar (1/2):${Color_Off}"
-echo -e "\t${BBlue}1. ${BGreen}Usar mi dirección IP local${Color_Off}"
-echo -e "\t${BBlue}2. ${BGreen}Usar otra direccion IP${Color_Off}"
-echo -en "\n${BGreen}>${Color_Off} " && read SELECT
-if [[ $SELECT == "1" ]]; then
-    HOST=$(ip route get 1 | awk '{print $7}')
-    echo $HOST > host.txt
-elif [[ $SELECT == "2" ]]; then
-    echo -e "${LBlue}[${BPurple}?${LBlue}] Escriba la dirección IP a usar${Color_Off}"
-    echo -en "\n${BGreen}>${Color_Off} " && read HOST
-    echo $HOST > host.txt
-fi
+    echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del objetivo:${Color_Off}"
+    echo -en "${BGreen}>${Color_Off} " && read TARGET
+    echo $TARGET > target.txt
 
-echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del objetivo:${Color_Off}"
-echo -en "${BGreen}>${Color_Off} " && read TARGET
-echo $TARGET > target.txt
-
-touch .attack
-echo -e "${LBlue}[${BYellow}!${LBlue}] ${BYellow}Desplegando el ataque...${Color_Off}"
+    touch .attack
+    echo -en "\n${LBlue}[${BYellow}!${LBlue}] ${BYellow}Desplegando el ataque...${Color_Off}"
+    tput civis; sleep 10; read
 }
 
 banner
