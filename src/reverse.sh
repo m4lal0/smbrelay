@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 LBlue='\033[0;94m'      # Ligth Blue
 BBlue='\033[1;34m'      # Bold Blue
@@ -9,10 +9,10 @@ tput civis
 
 while [ ! -f .attack ];do
     clear
-    echo -e "${LBlue}[${BBlue}+${LBlue}] ${BWhite}Configurando la Reverse Shell...${Color_Off}\n"
+    echo -e "${LBlue}[${BBlue}+${LBlue}] ${BWhite}Setting up Reverse Shell...${Color_Off}\n"
     sleep 5
 done
 
 tput cnorm
 
-rlwrap nc -nlvp 4647
+rlwrap -cAr nc -nlvp 5040

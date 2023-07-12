@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # By @m4lal0
 
@@ -77,7 +77,7 @@ On_White='\033[47m'     # Background White
 trap ctrl_c INT
 
 function ctrl_c(){
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Debes cerrar la ventana completa de Terminator.${Color_Off}\n"
+    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Closes the full Terminator window.${Color_Off}\n"
 }
 
 function banner(){
@@ -93,41 +93,40 @@ function banner(){
 }
 
 function configuration(){
-    echo -e "${LBlue}[${BPurple}?${LBlue}] ${BWhite}Elija la Interface disponible a usar:${Color_Off}"
-    ifconfig -a | cut -d ' ' -f 1 | xargs | tr ' ' '\n' | tr -d ':' > iface
-    counter=1; for interface in $(cat iface); do
-        echo -e "\t${BBlue}$counter.${BGreen} $interface${Color_Off}"; sleep 0.26
-        let counter++
+    IFACE=( $( for IFACE in $( ifconfig -s | awk '{print $1}' | grep -v "Iface" | tr '\r\n' ' ' ); do if ( ifconfig ${IFACE} | grep inet | grep -v inet6 1>/dev/null ); then echo ${IFACE}; fi; done ) )
+    #IFACE=( $( for IFACE in $( \ip -o link show | awk -F': ' '{print $2}' | \tr ' ' '\n' ); do if ( \ifconfig ${IFACE} | \grep inet 1>/dev/null ); then echo ${IFACE}; fi; done ) )
+    IPs=(); for (( i=0; i<${#IFACE[@]}; ++i )); do IPs+=( $( ifconfig "${IFACE[${i}]}" | grep 'inet' | grep -E '([[:digit:]]{1,2}.){4}' | sed -e 's_[:|addr|inet]__g; s_^[ \t]*__' | awk '{print $1}' ) ); done
+    echo -e "\n\t ${ICyan}I N T E R F A C E S${Color_Off}"
+    echo -e "${ICyan}----------------------------------------${Color_Off}"
+    for iface in "${IFACE[@]}"; do
+        IPs[${I}]="$( ifconfig "${iface}" | grep 'inet ' | grep -E '([[:digit:]]{1,2}.){4}' | sed -e 's_[:|addr|inet]__g; s_^[ \t]*__' | awk '{print $1}' )"
+        [[ -z "${IPs[${I}]}" ]] \
+        && IPs[${I}]="$( ifconfig "${iface}" | grep 'inet addr:' | cut -d':' -f2 | cut -d' ' -f1 )"
+        [[ -z "${IPs[${I}]}" ]] \
+        && IPs[${I}]="UNKNOWN"
+        echo -e " ${BYellow}$[${I}+1]${Color_Off}.) ${BGreen}${iface}${Color_Off} - ${BBlue}${IPs[${I}]}${Color_Off}"
+        I=$[${I}+1]
     done
-    echo -en "\n${BGreen}>${Color_Off} " && read IFACE
-    counter=1; for interface in $(cat iface); do
-        if [[ "$counter" == "$IFACE" ]]; then
-            echo $interface > iface.txt
-            break
-        fi
-        let counter++
+    echo -e "${ICyan}----------------------------------------${Color_Off}"
+    while [[ -z "${_IP}" ]]; do
+        echo -ne "\n ${LBlue}[${BPurple}?${LBlue}] ${BWhite}Select ${BYellow}1-${I}${Color_Off}${BWhite}, or ${Color_Off}${BGreen}interface${Color_Off}"; read -p ": " INPUT
+        for (( x=0; x<${I}; ++x )); do [[ "${INPUT}" == "${IFACE[${x}]}" ]] && _IP="${IPs[${x}]}" && _IFACE="${IFACE[${x}]}"; done           # Seleccionó una interfaz?
+        [[ "${INPUT}" != *"."* && "${INPUT}" -ge 1 && "${INPUT}" -le "${I}" ]] && _IP="${IPs[${INPUT}-1]}" && _IFACE="${IFACE[${INPUT}-1]}"  # Seleccionó un número de opción?
+        #for ip in "${IPs[@]}"; do [[ "${INPUT}" == "${ip}" ]] && _IP="${ip}"; done                                                          # Ingresó una dirección IP conocida?
+        [[ "${INPUT}" =~ ^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$ ]] && _IP="${INPUT}" && _IFACE="${INPUT}"               # Ingresó una dirección IP no válida?
+        echo "${_IP}" > host.txt
+        echo "${_IFACE}"  > iface.txt
     done
-    rm iface
 
-    echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del atacante a usar (1/2):${Color_Off}"
-    echo -e "\t${BBlue}1. ${BGreen}Usar mi dirección IP local${Color_Off}"
-    echo -e "\t${BBlue}2. ${BGreen}Usar otra direccion IP${Color_Off}"
-    echo -en "\n${BGreen}>${Color_Off} " && read SELECT
-    if [[ $SELECT == "1" ]]; then
-        HOST=$(ip route get 1 | awk '{print $7}')
-        echo $HOST > host.txt
-    elif [[ $SELECT == "2" ]]; then
-        echo -e "${LBlue}[${BPurple}?${LBlue}] Escriba la dirección IP a usar${Color_Off}"
-        echo -en "\n${BGreen}>${Color_Off} " && read HOST
-        echo $HOST > host.txt
-    fi
-
-    echo -e "\n${LBlue}[${BPurple}?${LBlue}] ${BWhite}IP del objetivo:${Color_Off}"
-    echo -en "${BGreen}>${Color_Off} " && read TARGET
-    echo $TARGET > target.txt
+    while [[ -z "${_TARGET}" ]]; do
+        echo -ne "\n ${LBlue}[${BPurple}?${LBlue}] ${BWhite}Target IP Address:${Color_Off} "; read TARGET
+        # echo -en "${BGreen} > ${Color_Off}" && read TARGET
+        [[ "${TARGET}" =~ ^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$ ]] && _TARGET="${TARGET}"
+        echo $TARGET > target.txt
+    done
 
     touch .attack
-    echo -en "\n${LBlue}[${BYellow}!${LBlue}] ${BYellow}Desplegando el ataque...${Color_Off}"
+    echo -ne "\n ${LBlue}[${BYellow}!${LBlue}] ${BYellow}Starting the attack...${Color_Off}"
     tput civis; sleep 10; read
 }
 

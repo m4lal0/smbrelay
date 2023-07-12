@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # By @m4lal0
 
@@ -75,23 +75,23 @@ On_Cyan='\033[46m'      # Background Cyan
 On_White='\033[47m'     # Background White
 
 export DEBIAN_FRONTEND=noninteractive
-VERSION=1.0.1
+VERSION=1.0.2
 
 trap ctrl_c INT
 
 function ctrl_c(){
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Saliendo...${Color_Off}"
+    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Exiting...${Color_Off}"
     stopped
     exit 0
 }
 
 function helpPanel(){
-    echo -e "\n${BWhite}Herramienta hecha en Bash ideal para automatizar el ataque Samba Relay.${Color_Off}\n"
-    echo -e "${BWhite}USO: \n\t ${BGreen}./smbrelay.sh${Color_Off}\n"
-    echo -e "${BWhite}OPCIONES:${Color_Off}"
-    echo -e "\t${LBlue}[${BRed}-i , --install${LBlue}] \t${BPurple}Instalación de herramientas para la correcta ejecución del script.${Color_Off}"
-    echo -e "\t${LBlue}[${BRed}-u , --update${LBlue}] \t${BPurple}Actualizar la herramienta a la última versión.${Color_Off}"
-    echo -e "\t${LBlue}[${BRed}-h , --help${LBlue}] \t\t${BPurple}Mostrar este panel de ayuda.${Color_Off}\n"
+    echo -e "\n${BWhite}Tool made in Bash for automating the Samba Relay Attack.${Color_Off}\n"
+    echo -e "${BWhite}USAGE: \n\t ${BGreen}./smbrelay.sh${Color_Off}\n"
+    echo -e "${BWhite}OPTIONS:${Color_Off}"
+    echo -e "\t${LBlue}[${BRed}-i , --install${LBlue}] \t${BPurple}Tool installation.${Color_Off}"
+    echo -e "\t${LBlue}[${BRed}-u , --update${LBlue}] \t${BPurple}Tool update.${Color_Off}"
+    echo -e "\t${LBlue}[${BRed}-h , --help${LBlue}] \t\t${BPurple}Show this help message.${Color_Off}\n"
     tput cnorm; exit 0
 }
 
@@ -110,17 +110,17 @@ function banner(){
 function checkUpdate(){
     GIT=$(curl --silent https://github.com/m4lal0/smbrelay/blob/main/smbrelay.sh | grep 'VERSION=' | cut -d">" -f2 | cut -d"<" -f1 | cut -d"=" -f 2)
     if [[ "$GIT" == "$VERSION" || -z $GIT ]]; then
-        echo -e "${BGreen}[✔]${Color_Off} ${BGreen}La versión actual es la más reciente.${Color_Off}\n"
+        echo -e "${BGreen}[✔]${Color_Off} ${BGreen}The current version is the latest one.${Color_Off}\n"
         tput cnorm; exit 0
     else
-        echo -e "${Yellow}[*]${Color_Off} ${IWhite}Actualización disponible${Color_Off}"
-        echo -e "${Yellow}[*]${Color_Off} ${IWhite}Actualización de la versión${Color_Off} ${BWhite}$VERSION${Color_Off} ${IWhite}a la${Color_Off} ${BWhite}$GIT${Color_Off}"
+        echo -e "${Yellow}[*]${Color_Off} ${IWhite}Update available${Color_Off}"
+        echo -e "${Yellow}[*]${Color_Off} ${IWhite}Upgrading the version${Color_Off} ${BWhite}$VERSION${Color_Off} ${IWhite}to the${Color_Off} ${BWhite}$GIT${Color_Off}"
         update="1"
     fi
 }
 
 function installUpdate(){
-    echo -en "${Yellow}[*]${Color_Off} ${IWhite}Instalando actualización...${Color_Off}"
+    echo -en "${Yellow}[*]${Color_Off} ${IWhite}Installing updates...${Color_Off}"
     git clone https://github.com/m4lal0/smbrelay &>/dev/null
     chmod +x smbrelay/smbrelay.sh && mv smbrelay/src/* src &>/dev/null
     mv smbrelay/smbrelay.sh . &>/dev/null
@@ -130,7 +130,7 @@ function installUpdate(){
         echo -e "${BRed}[ FAIL ]${Color_Off}"
         tput cnorm && exit 1
     fi
-    echo -en "${Yellow}[*]${Color_Off} ${IWhite}Limpiando...${Color_Off}"
+    echo -en "${Yellow}[*]${Color_Off} ${IWhite}Cleaning...${Color_Off}"
     wait
     rm -rf smbrelay &>/dev/null
     if [ "$(echo $?)" == "0" ]; then
@@ -139,26 +139,26 @@ function installUpdate(){
         echo -e "${BRed}[ FAIL ]${Color_Off}"
         tput cnorm && exit 1
     fi
-    echo -e "\n${BGreen}[✔]${Color_Off} ${IGreen}Versión actualizada a${Color_Off} ${BWhite}$GIT${Color_Off}\n"
+    echo -e "\n${BGreen}[✔]${Color_Off} ${IGreen}Version updated to${Color_Off} ${BWhite}$GIT${Color_Off}\n"
     tput cnorm && exit 0
 }
 
 function update(){
     banner
-    echo -e "\n${BBlue}[+]${Color_Off} ${BWhite}smbrelay Versión $VERSION${Color_Off}"
-    echo -e "${BBlue}[+]${Color_Off} ${BWhite}Verificando actualización de smbrelay${Color_Off}"
+    echo -e "\n${BBlue}[+]${Color_Off} ${BWhite}Version smbrelay: $VERSION${Color_Off}"
+    echo -e "${BBlue}[+]${Color_Off} ${BWhite}Checking smbrelay update${Color_Off}"
     checkUpdate
-    echo -e "\t${BWhite}$VERSION ${IWhite}Versión Instalada${Color_Off}"
-    echo -e "\t${BWhite}$GIT ${IWhite}Versión en Git${Color_Off}\n"
+    echo -e "\t${BWhite}$VERSION ${IWhite}Installed version${Color_Off}"
+    echo -e "\t${BWhite}$GIT ${IWhite}Version in Git${Color_Off}\n"
     if [ "$update" != "1" ]; then
         tput cnorm && exit 0;
     else
-        echo -e "${BBlue}[+]${Color_Off} ${BWhite}Necesita actualizar!${Color_Off}"
+        echo -e "${BBlue}[+]${Color_Off} ${BWhite}Need to upgrade!${Color_Off}"
         tput cnorm
-        echo -en "${BPurple}[?]${Color_Off} ${BCyan}Quiere actualizar? (${BGreen}Y${BCyan}/${BRed}n${BCyan}):${Color_Off} " && read CONDITION
+        echo -en "${BPurple}[?]${Color_Off} ${BCyan}Want to upgrade? (${BGreen}Y${BCyan}/${BRed}n${BCyan}):${Color_Off} " && read CONDITION
         tput civis
         case "$CONDITION" in
-            n|N) echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}No se actualizo, se queda en la versión ${BWhite}$VERSION${Color_Off}\n" && tput cnorm && exit 0;;
+            n|N) echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}No updated, stays on version ${BWhite}$VERSION${Color_Off}\n" && tput cnorm && exit 0;;
             *) installUpdate;;
         esac
     fi
@@ -166,16 +166,16 @@ function update(){
 
 function install(){
     banner
-    dependencies=(terminator responder crackmapexec rlwrap)
-    echo -e "\n${LBlue}[${BBlue}+${LBlue}] ${BBlue}Comprobando herramientas necesarias:${Color_Off}\n"
+    dependencies=(terminator responder rlwrap ncat python3 nishang perl python3-impacket)
+    echo -e "\n${LBlue}[${BBlue}+${LBlue}] ${BBlue}Checking required tools:${Color_Off}\n"
     for program in "${dependencies[@]}"; do
-        echo -ne "${LBlue}[${BBlue}*${LBlue}] ${BWhite}Herramienta $program...${Color_Off}"
+        echo -ne "${LBlue}[${BBlue}*${LBlue}] ${BWhite}Tool: $program...${Color_Off}"
         command -v $program > /dev/null 2>&1
         if [ "$(echo $?)" == "0" ]; then
             echo -e "${LBlue}($BGreen✔${LBlue})${Color_Off}"
         else
             echo -e "${LBlue}(${BRed}✘${LBlue})${Color_Off}"
-            echo -en "${LBlue}[${BYellow}!${LBlue}] ${BYellow}Instalando herramienta ${BGreen}$program...${Color_Off}"
+            echo -en "${LBlue}[${BYellow}!${LBlue}] ${BYellow}Installing ${BGreen}$program...${Color_Off}"
             apt-get install $program -y > /dev/null 2>&1
             if [ "$(echo $?)" == "0" ]; then
                 echo -e "${LBlue}($BGreen✔${LBlue})${Color_Off}"
@@ -197,7 +197,7 @@ function install(){
     if [ -f README.md ]; then
         rm README.md 2>/dev/null
     fi
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BGreen}Ya puedes ejecutar la herramienta: ./smbrelay.sh${Color_Off}\n"
+    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BGreen}Run the script: ./smbrelay.sh${Color_Off}\n"
     tput cnorm; exit 0
 }
 
@@ -234,11 +234,11 @@ if [ "$(id -u)" == "0" ]; then
         esac
     done
 
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BGreen}Iniciando SMBrelay...${Color_Off}"
+    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BGreen}Starting SMBrelay...${Color_Off}"
     sleep 2
     terminator -l smbrelay
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Deteniendo SMBrelay...${Color_Off}\n"
+    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Stopping SMBrelay...${Color_Off}\n"
     stopped
 else
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Ejecuta el script como r00t!${Color_Off}\n"
+    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}It is necessary to run the program as root!${Color_Off}\n"
 fi
