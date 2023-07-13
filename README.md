@@ -1,19 +1,20 @@
 # SMB Relay Attack Script
 
-[![GitHub top language](https://img.shields.io/github/languages/top/m4lal0/smbrelay?logo=gnu-bash&style=flat-square)](#)
-[![GitHub repo size](https://img.shields.io/github/repo-size/m4lal0/smbrelay?logo=webpack&style=flat-square)](#)
-[![Kali Supported](https://img.shields.io/badge/Kali-Supported-blue?style=flat-square&logo=linux)](#)
-[![Parrot Supported](https://img.shields.io/badge/Parrot-Supported-blue?style=flat-square&logo=linux)](#)
-[![Version](https://img.shields.io/badge/Version-1.0.1-blue?style=flat-square)](#)
-[![By](https://img.shields.io/badge/By-m4lal0-green?style=flat-square&logo=github)](#)
+[![GitHub top language](https://img.shields.io/github/languages/top/m4lal0/smbrelay?logo=gnu-bash&style=for-the-badge)](#)
+[![GitHub repo size](https://img.shields.io/github/repo-size/m4lal0/smbrelay?logo=webpack&style=for-the-badge)](#)
+[![Kali Supported](https://img.shields.io/badge/Kali-Supported-blue?style=for-the-badge&logo=kali-linux)](#)
+[![Version](https://img.shields.io/badge/Version-1.0.2-blue?style=for-the-badge)](#)
+[![By](https://img.shields.io/badge/By-m4lal0-green?style=for-the-badge&logo=github)](#)
 
-**SMBRelay** es un Script de Ataque de retransmisión SMB, que automatiza todos los pasos para retransmitir la solicitud de autenticación a estos sistemas con el objetivo de obtener un shell. Ideal para realizar pruebas de penetración.
+![SMBRelay](./images/name.png)
+
+**SMBRelay** es un script de ataque de retransmisión SMB, que automatiza todos los pasos para retransmitir la solicitud de autenticación a estos sistemas con el objetivo de obtener un shell. Ideal para realizar pruebas de penetración.
 
 SMBRelay crea y entrega la carga útil aprovechando la herramienta Nishang.
 
 ## Instalación
 
-```
+```bash
 git clone https://github.com/m4lal0/smbrelay
 cd smbrelay; chmod +x smbrelay.sh
 ./smbrelay.sh --install
@@ -21,12 +22,11 @@ cd smbrelay; chmod +x smbrelay.sh
 
 Al ejecutarlo realizará la instalación de las dependencias y configura la terminal Terminator para su uso correcto. El script de instalación funciona con administradores de paquetes apt (Debian).
 
-
 ## ¿Cómo ejecuto la herramienta?
 
 Para ejecutar la herramienta solo es necesario ejecutarlo de la siguiente manera (como root):
 
-```
+```bash
 ./smbrelay.sh
 ```
 
