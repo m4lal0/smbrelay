@@ -53,7 +53,7 @@
       order = 1
       profile = default
       uuid = 3646254b-0ebc-4bbd-ab97-fee8f0792b06
-      command = bash src/reverse.sh
+      command = bash src/configweb.sh
     [[[child5]]]
       type = VPaned
       parent = child1
@@ -73,5 +73,5 @@
       order = 1
       profile = default
       uuid = a2856dda-d422-4c8a-9cb4-b8eb8e455388
-      command = bash src/configweb.sh
+      command = bash src/reverse.sh
 [plugins]
