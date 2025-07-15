@@ -75,12 +75,12 @@ On_Cyan='\033[46m'      # Background Cyan
 On_White='\033[47m'     # Background White
 
 export DEBIAN_FRONTEND=noninteractive
-VERSION=1.0.3
+VERSION=2.0.0
 
 trap ctrl_c INT
 
 function ctrl_c(){
-    echo -e "\n${LBlue}[${BYellow}!${LBlue}] ${BRed}Exiting...${Color_Off}"
+    echo -e "\n ${LBlue}[${BYellow}!${LBlue}] ${BRed}Exiting...${Color_Off}"
     stopped
     exit 0
 }
@@ -108,7 +108,6 @@ function banner(){
 }
 
 function printVersion(){
-    # Mostrar la versión actual de la herramienta con el banner
     banner
     echo -e "\n${White}Version: ${BWhite}$VERSION${Color_Off}\n"
     tput cnorm; exit 1
@@ -216,7 +215,8 @@ function install_dependencies() {
 
 function install() {
     banner
-    dependencies=(terminator responder rlwrap netcat-traditional python3 nishang python3-impacket)
+    # Array de dependecias
+    dependencies=(terminator responder rlwrap netcat-traditional python3 nishang python3-impacket metasploit-framework rustcat)
     echo -e "\n${LBlue}[${BBlue}+${LBlue}] ${BBlue}Checking required tools:${Color_Off}\n"
     missing_deps=($(check_dependencies))
     if [ ${#missing_deps[@]} -gt 0 ]; then
@@ -243,10 +243,10 @@ function install() {
 }
 
 function stopped(){
-    for file in iface.txt .attack PS.ps1 target.txt host.txt; do
-        [ -f "$file" ] && rm -f "$file" #|| echo "No se encontró $file"
+    for file in iface.txt .attack PS.ps1 ps.exe target.txt host.txt port.txt tool.txt listener.rc; do
+        [ -f "$file" ] && rm -f "$file" #|| echo "No $file found"
     done
-    pkill -f "python3.*responder" > /dev/null 2>&1 #|| echo "No Responder processes found"
+    pkill -f "python3" > /dev/null 2>&1 #|| echo "No Python and Responder processes found"
     if [ -f "/usr/share/responder/Responder.conf" ]; then
         sed -i 's/SMB      = Off/SMB      = On/g' /usr/share/responder/Responder.conf
         sed -i 's/HTTP     = Off/HTTP     = On/g' /usr/share/responder/Responder.conf
